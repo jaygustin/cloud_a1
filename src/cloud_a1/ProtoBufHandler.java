@@ -3,11 +3,13 @@ package cloud_a1;
 import java.io.IOException;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 
-public class AnimalHandler implements HttpHandler {
+public class ProtoBufHandler extends Handler {
 
-	@Override
+	public ProtoBufHandler(String defaultResponse) {
+		super(defaultResponse);
+	}
+
 	public void handle(HttpExchange he) throws IOException {
 		// TODO Auto-generated method stub
 		

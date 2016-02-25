@@ -4,7 +4,7 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
 
-public class JsonServer {
+public class AnimalServer {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 8080;
     private static final int BACKLOG = 1;
@@ -12,8 +12,8 @@ public class JsonServer {
     public static void main(final String... args) throws IOException {
         final HttpServer server = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT), BACKLOG);
         server.createContext("/", new Handler("Let's play a game"));
-        server.createContext("/gamePlayJson", new Handler("Think of an animal..."));
-        server.createContext("/gamePlayProtoBuf", new Handler("Think of an animal..."));
+        server.createContext("/gamePlayJson", new JsonHandler("Think of an animal..."));
+        server.createContext("/gamePlayProtoBuf", new ProtoBufHandler("Think of an animal..."));
         server.start();
     }
 }

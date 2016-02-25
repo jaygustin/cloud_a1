@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -28,11 +29,13 @@ public class Handler implements HttpHandler {
     private static final int NO_RESPONSE_LENGTH = -1;
     
     private static final String METHOD_GET = "GET";
+    private static final String METHOD_POST = "POST";
     private static final String METHOD_OPTIONS = "OPTIONS";
     private static final String ALLOWED_METHODS = METHOD_GET + "," + METHOD_OPTIONS;
     
     private String defaultResponse;
     private String responseBody;
+    private Gson gson = new Gson();
     
     public Handler(String defaultResponse) {
     	this.defaultResponse = defaultResponse;
@@ -50,13 +53,15 @@ public class Handler implements HttpHandler {
                     if (requestParameters.isEmpty()) {
                     	responseBody = defaultResponse;
                     } else {
-                    	responseBody = getResponse();
+                    	responseBody = getResponse(requestParameters);
                     }
                     headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET));
                     final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
                     he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
                     he.getResponseBody().write(rawResponseBody);
                     break;
+                case METHOD_POST:
+                	handlePostResponse(he);
                 case METHOD_OPTIONS:
                     headers.set(HEADER_ALLOW, ALLOWED_METHODS);
                     he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
@@ -71,7 +76,12 @@ public class Handler implements HttpHandler {
         }
 	}
 	
-	private String getResponse() {
+	private void handlePostResponse(HttpExchange he) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private String getResponse(Map<String, List<String>> requestParameters) {
 		return defaultResponse;
 	}
 	
