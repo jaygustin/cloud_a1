@@ -3,8 +3,6 @@ package cloud_a1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.Headers;
@@ -24,13 +22,8 @@ public class JsonHandler extends Handler {
 			final String requestMethod = he.getRequestMethod().toUpperCase();
 			switch (requestMethod) {
 			case METHOD_GET:
-				final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
 				// start game at root node
-				if (requestParameters.isEmpty()) {
-					responseBody = buildJsonForNode(animalTree.root).toString();
-				} else {
-					responseBody = getResponse(requestParameters);
-				}
+				responseBody = buildJsonForNode(animalTree.root).toString();
 				headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET));
 				final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
 				he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
@@ -38,9 +31,6 @@ public class JsonHandler extends Handler {
 				break;
 			case METHOD_POST:
 				handlePostResponse(he, headers);
-			case METHOD_OPTIONS:
-				headers.set(HEADER_ALLOW, ALLOWED_METHODS);
-				he.sendResponseHeaders(STATUS_OK, NO_RESPONSE_LENGTH);
 				break;
 			default:
 				headers.set(HEADER_ALLOW, ALLOWED_METHODS);
@@ -59,12 +49,10 @@ public class JsonHandler extends Handler {
 		String response = br.readLine();
 		QuestionAnswerResponse qa = gson.fromJson(response, QuestionAnswerResponse.class);
 		if (qa != null) {
-			// System.out.println("Requested node: " + qa.id);
 			Node nextNode = animalTree.getNextNode(qa.id, qa.yes);
 			if (nextNode == null) {
 				sendResponse(he, buildJsonForNode(doneNode).toString());
 			} else {
-				// System.out.println("Next node: " + nextNode.id);
 				sendResponse(he, buildJsonForNode(nextNode).toString());
 			}
 		} else {

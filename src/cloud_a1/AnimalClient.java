@@ -51,12 +51,10 @@ public class AnimalClient {
 			HttpPost httpPost = new HttpPost(URL + "/gamePlayJson");
 			if (!"".equals(yesOrNo)) {
 				String content = gson.toJson(new QuestionAnswerResponse(id, yesOrNo));
-//				System.out.println("Content " + content);
 				StringEntity entity = new StringEntity(content, Handler.CHARSET);
 				httpPost.setEntity(entity);
 			}
 			String sResponse = httpclient.execute(httpPost, responseHandler);
-//			System.out.println(sResponse);
 			node = gson.fromJson(sResponse, Node.class);
 
 			if (node.question.equals("done")) {

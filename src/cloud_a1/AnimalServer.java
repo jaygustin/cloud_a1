@@ -12,7 +12,7 @@ public class AnimalServer {
 
 	public static void main(final String... args) throws IOException {
 		BinaryTree animalTree = new BinaryTree();
-		animalTree.addNode(50, "Does it fly?");
+		animalTree.addRootNode(50, "Does it fly?");
 			animalTree.addYesChild(50, 30, "Does it have feathers?");
 				animalTree.addYesChild(30, 20, "Does it go quack?");
 					animalTree.addYesChild(20, 10, "Is it a duck?");
@@ -29,7 +29,7 @@ public class AnimalServer {
 					animalTree.addNoChild(80, 85, "Is it a cow?");
 		final HttpServer server = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT), BACKLOG);
 
-		server.createContext("/", new Handler("Let's play a game", animalTree));
+		server.createContext("/", new Handler("Let's play a game", animalTree));	//unneeded
 		server.createContext("/gamePlayJson", new JsonHandler("Think of an animal...", animalTree));
 		server.createContext("/gamePlayProtoBuf", new ProtoBufHandler("Think of an animal...", animalTree));
 		server.start();
