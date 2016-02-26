@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
@@ -21,13 +22,13 @@ public class AnimalClient {
 	private static final String URL = "http://localhost:8080";
 	private static ResponseHandler<String> responseHandler = new BasicResponseHandler();
 	private static Gson gson = new Gson();
+	private static Scanner in = new Scanner(System.in);
 
 	public static void main(final String... args) throws IOException {
-		CloseableHttpClient httpclient = HttpClients.createMinimal();
+		CloseableHttpClient httpclient = HttpClients.createDefault();
 		System.out.println("Let's play a game! Please choose the method of serialization "
 				+ "by entering the corresponding number" + " 1. json or 2. protobuf");
 
-		Scanner in = new Scanner(System.in);
 		int choice = in.nextInt();
 		in.nextLine(); // throw away \n
 		boolean json = choice == 1;
@@ -58,7 +59,11 @@ public class AnimalClient {
 			String content = gson.toJson(new QuestionAnswerResponse(id, yesOrNo(in)));
 			StringEntity entity = new StringEntity(content, Handler.CHARSET);
 			httpPost.setEntity(entity);
-			String sResponse = httpclient.execute(httpPost, responseHandler);
+			String sResponse = doPost(httpclient, httpPost, responseHandler);
+			if (sResponse == null) {
+				System.out.println("Server was busy, sorry about that. Re-run the program if you would like to play again.");
+				break;
+			}
 			node = gson.fromJson(sResponse, Node.class);
 
 			if (node.question.equals("done")) {
@@ -71,8 +76,7 @@ public class AnimalClient {
 		}
 	}
 
-	private static void runProtoVersion(Scanner in, CloseableHttpClient httpclient)
-			throws IOException {
+	private static void runProtoVersion(Scanner in, CloseableHttpClient httpclient) throws IOException {
 		HttpGet httpGet = new HttpGet(URL + "/gamePlayProtoBuf");
 		HttpResponse response = httpclient.execute(httpGet);
 		InputStream is = response.getEntity().getContent();
@@ -82,11 +86,15 @@ public class AnimalClient {
 		int id = sr.getId();
 		while (true) {
 			HttpPost httpPost = new HttpPost(URL + "/gamePlayProtoBuf");
-			byte[] content = ResponseProtos.ClientResponse.newBuilder().setId(id).setYes(yesOrNo(in))
-					.build().toByteArray();
+			byte[] content = ResponseProtos.ClientResponse.newBuilder().setId(id).setYes(yesOrNo(in)).build()
+					.toByteArray();
 			ByteArrayEntity entity = new ByteArrayEntity(content);
 			httpPost.setEntity(entity);
-			response = httpclient.execute(httpPost);
+			response = doPost(httpclient, httpPost);
+			if (response == null) {
+				System.out.println("Server was busy, sorry about that. Re-run the program if you would like to play again.");
+				break;
+			}
 			is = response.getEntity().getContent();
 			sr = ResponseProtos.ServerResponse.parseFrom(is);
 
@@ -109,5 +117,33 @@ public class AnimalClient {
 				return false;
 			}
 		}
+	}
+
+	static HttpResponse doPost(CloseableHttpClient httpclient, HttpPost httpPost)
+			throws ClientProtocolException, IOException {
+		try {
+			return httpclient.execute(httpPost);
+		} catch (NoHttpResponseException e) {
+			System.out.println("No response from server. Try this request again? yes/no");
+			if (in.nextLine().contains("yes")) {
+				// try again
+				return doPost(httpclient, httpPost);
+			}
+		}
+		return null;
+	}
+
+	static String doPost(CloseableHttpClient httpclient, HttpPost httpPost, ResponseHandler<String> handler)
+			throws ClientProtocolException, IOException {
+		try {
+			return httpclient.execute(httpPost, handler);
+		} catch (NoHttpResponseException e) {
+			System.out.println("No response from server. Try this request again? yes/no");
+			if (in.nextLine().contains("yes")) {
+				// try again
+				return doPost(httpclient, httpPost, handler);
+			}
+		}
+		return null;
 	}
 }
