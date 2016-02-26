@@ -6,8 +6,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 public class ProtoBufHandler extends Handler {
 
-	public ProtoBufHandler(String defaultResponse) {
-		super(defaultResponse);
+	public ProtoBufHandler(String defaultResponse, BinaryTree animalTree) {
+		super(defaultResponse, animalTree);
 	}
 
 	public void handle(HttpExchange he) throws IOException {
