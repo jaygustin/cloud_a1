@@ -13,20 +13,20 @@ public class AnimalServer {
 	public static void main(final String... args) throws IOException {
 		BinaryTree animalTree = new BinaryTree();
 		animalTree.addNode(50, "Does it fly?");
-			animalTree.addNode(30, "Does it have feathers?");
-				animalTree.addNode(20, "Does it go quack?");
-					animalTree.addNode(10, "Is it a duck?");
-					animalTree.addNode(25, "Is it a chicken?");
-				animalTree.addNode(35, "Does it collect honey?");
-					animalTree.addNode(40, "Is it a bat?");
-					animalTree.addNode(28, "Is it a bee?");
-			animalTree.addNode(75, "Does it have scales?");
-				animalTree.addNode(60, "Is it armless?");
-					animalTree.addNode(5, "Is it a snake?");
-					animalTree.addNode(65, "Is it an alligator?");
-				animalTree.addNode(80, "Does it bark?");
-					animalTree.addNode(77, "Is it a dog?");
-					animalTree.addNode(85, "Is it a cow?");
+			animalTree.addYesChild(50, 30, "Does it have feathers?");
+				animalTree.addYesChild(30, 20, "Does it go quack?");
+					animalTree.addYesChild(20, 10, "Is it a duck?");
+					animalTree.addNoChild(20, 25, "Is it a chicken?");
+				animalTree.addNoChild(30, 35, "Does it collect honey?");
+					animalTree.addYesChild(35, 40, "Is it a bat?");
+					animalTree.addNoChild(35, 28, "Is it a bee?");
+			animalTree.addNoChild(50, 75, "Does it have scales?");
+				animalTree.addYesChild(75, 60, "Is it armless?");
+					animalTree.addYesChild(60, 5, "Is it a snake?");
+					animalTree.addNoChild(60, 65, "Is it an alligator?");
+				animalTree.addNoChild(75, 80, "Does it bark?");
+					animalTree.addYesChild(80, 77, "Is it a dog?");
+					animalTree.addNoChild(80, 85, "Is it a cow?");
 		final HttpServer server = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT), BACKLOG);
 
 		server.createContext("/", new Handler("Let's play a game", animalTree));

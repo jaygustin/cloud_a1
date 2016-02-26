@@ -25,8 +25,8 @@ public class BinaryTree {
 			while (true) {
 				parent = focusNode;
 
-				// Check if the new node should go be a yes
-				if (key < focusNode.key) {
+				// Check if the new node should be a yes
+				if (key < focusNode.id) {
 					// Switch focus to the yes child
 					focusNode = focusNode.yesChild;
 
@@ -47,11 +47,21 @@ public class BinaryTree {
 		}
 	}
 
+	public void addYesChild(int parentKey, int key, String name) {
+		Node parent = findNode(parentKey);
+		parent.yesChild = new Node(key, name);
+	}
+
+	public void addNoChild(int parentKey, int key, String name) {
+		Node parent = findNode(parentKey);
+		parent.noChild = new Node(key, name);
+	}
+
 	public Node getNextNode(int key, boolean yes) {
 		Node focusNode = findNode(key);
 		return yes ? focusNode.yesChild : focusNode.noChild;
 	}
-	
+
 	public Node getNextNode(Node focusNode, boolean yes) {
 		return yes ? focusNode.yesChild : focusNode.noChild;
 	}
@@ -100,10 +110,10 @@ public class BinaryTree {
 		// While we haven't found the Node
 		// keep looking
 
-		while (focusNode.key != key) {
+		while (focusNode.id != key) {
 
 			// If we should search to the left
-			if (key < focusNode.key) {
+			if (key < focusNode.id) {
 				// Shift the focus Node to the left child
 				focusNode = focusNode.yesChild;
 			} else {
@@ -120,22 +130,22 @@ public class BinaryTree {
 
 class Node {
 
-	int key;
-	String name;
+	int id;
+	String question;
 
 	Node yesChild;
 	Node noChild;
 
 	Node(int key, String name) {
 
-		this.key = key;
-		this.name = name;
+		this.id = key;
+		this.question = name;
 
 	}
 
 	public String toString() {
 
-		return name + " has the key " + key;
+		return question + " has the key " + id;
 	}
 
 }

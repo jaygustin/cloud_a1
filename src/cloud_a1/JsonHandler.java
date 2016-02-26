@@ -1,6 +1,8 @@
 package cloud_a1;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +11,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 public class JsonHandler extends Handler {
+
+	private Node doneNode = new Node(0, "done");
 
 	public JsonHandler(String defaultResponse, BinaryTree animalTree) {
 		super(defaultResponse, animalTree);
@@ -21,9 +25,9 @@ public class JsonHandler extends Handler {
 			switch (requestMethod) {
 			case METHOD_GET:
 				final Map<String, List<String>> requestParameters = getRequestParameters(he.getRequestURI());
-				// do something with the request parameters
+				// start game at root node
 				if (requestParameters.isEmpty()) {
-					responseBody = defaultResponse;
+					responseBody = buildJsonForNode(animalTree.root).toString();
 				} else {
 					responseBody = getResponse(requestParameters);
 				}
@@ -48,34 +52,36 @@ public class JsonHandler extends Handler {
 		}
 	}
 
-	void handlePostResponse(HttpExchange he, Headers headers) {
+	void handlePostResponse(HttpExchange he, Headers headers) throws IOException {
 		headers.set(HEADER_CONTENT_TYPE, String.format("application/json; charset=%s", CHARSET));
-		String response = he.getResponseBody().toString();
+		InputStreamReader isr = new InputStreamReader(he.getRequestBody(), CHARSET);
+		BufferedReader br = new BufferedReader(isr);
+		String response = br.readLine();
 		QuestionAnswerResponse qa = gson.fromJson(response, QuestionAnswerResponse.class);
 		if (qa != null) {
-			Node nextNode = animalTree.getNextNode(qa.nodeId, qa.yes);
-			try {
-				he.getResponseBody().write(buildJsonForNode(nextNode).getAsByte());
-			} catch (IOException e) {
-				e.printStackTrace();
+			// System.out.println("Requested node: " + qa.id);
+			Node nextNode = animalTree.getNextNode(qa.id, qa.yes);
+			if (nextNode == null) {
+				sendResponse(he, buildJsonForNode(doneNode).toString());
+			} else {
+				// System.out.println("Next node: " + nextNode.id);
+				sendResponse(he, buildJsonForNode(nextNode).toString());
 			}
 		} else {
-
+			sendResponse(he, "something went wrong");
 		}
 	}
 
 	JsonObject buildJsonForNode(Node node) {
 		JsonObject json = new JsonObject();
-		json.addProperty("id", node.key);
-		json.addProperty("question", node.name);
+		json.addProperty("id", node.id);
+		json.addProperty("question", node.question);
 		return json;
 	}
 
-	int extractNodeId(JsonObject json) {
-		JsonObject idObject = json.getAsJsonObject("id");
-		if (idObject != null) {
-			return idObject.getAsInt();
-		}
-		return 0;
+	void sendResponse(HttpExchange he, String responseBody) throws IOException {
+		final byte[] rawResponseBody = responseBody.getBytes(CHARSET);
+		he.sendResponseHeaders(STATUS_OK, rawResponseBody.length);
+		he.getResponseBody().write(rawResponseBody);
 	}
 }
