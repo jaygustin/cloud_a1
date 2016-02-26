@@ -10,8 +10,6 @@ import com.sun.net.httpserver.HttpExchange;
 
 public class JsonHandler extends Handler {
 
-	private Node doneNode = new Node(0, "done");
-
 	public JsonHandler(String defaultResponse, BinaryTree animalTree) {
 		super(defaultResponse, animalTree);
 	}
@@ -56,7 +54,7 @@ public class JsonHandler extends Handler {
 				sendResponse(he, buildJsonForNode(nextNode).toString());
 			}
 		} else {
-			sendResponse(he, "something went wrong");
+			//do nothing, something went wrong
 		}
 	}
 

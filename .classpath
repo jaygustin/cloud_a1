@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="/home/janice/jdk1.8.0_73/jre/lib/ext/httpcomponents-client-4.5.1/lib/httpclient-4.5.1.jar"/>
 	<classpathentry kind="lib" path="/home/janice/jdk1.8.0_73/jre/lib/ext/httpcomponents-client-4.5.1/lib/httpcore-4.4.3.jar"/>
 	<classpathentry kind="lib" path="/home/janice/jdk1.8.0_73/jre/lib/ext/httpcomponents-client-4.5.1/lib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/janice/Downloads/protobuf-3.0.0-beta-2/java/target/protobuf-java-3.0.0-beta-2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

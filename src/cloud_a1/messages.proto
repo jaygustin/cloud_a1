@@ -1,0 +1,12 @@
+package cloud_a1;
+option java_outer_classname = "ResponseProtos";
+
+message ServerResponse {
+	required int32 id = 1;
+	required string question = 2;
+}
+
+message ClientResponse {
+	required int32 id = 1;
+	required bool yes = 2;
+}

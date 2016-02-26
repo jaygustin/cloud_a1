@@ -29,7 +29,6 @@ public class AnimalServer {
 					animalTree.addNoChild(80, 85, "Is it a cow?");
 		final HttpServer server = HttpServer.create(new InetSocketAddress(HOSTNAME, PORT), BACKLOG);
 
-		server.createContext("/", new Handler("Let's play a game", animalTree));	//unneeded
 		server.createContext("/gamePlayJson", new JsonHandler("Think of an animal...", animalTree));
 		server.createContext("/gamePlayProtoBuf", new ProtoBufHandler("Think of an animal...", animalTree));
 		server.start();

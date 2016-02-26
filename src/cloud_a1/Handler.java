@@ -19,6 +19,7 @@ public class Handler implements HttpHandler {
 	static final String HEADER_CONTENT_TYPE = "Content-Type";
 
 	static final Charset CHARSET = StandardCharsets.UTF_8;
+	static final Charset ASCII = StandardCharsets.US_ASCII;
 
 	static final int STATUS_OK = 200;
 	static final int STATUS_METHOD_NOT_ALLOWED = 405;
@@ -29,6 +30,7 @@ public class Handler implements HttpHandler {
 	static final String METHOD_POST = "POST";
 	static final String ALLOWED_METHODS = METHOD_GET + "," + METHOD_POST;
 
+	Node doneNode = new Node(0, "done");
 	String defaultResponse;
 	String responseBody;
 	Gson gson = new Gson();
