@@ -46,10 +46,8 @@ public class AnimalClient {
 		// do nothing
 		// }
 
-		boolean done = false;
-		int i = 5;
 		int id = node.id;
-		while (!done || (i > 0)) {
+		while (true) {
 			HttpPost httpPost = new HttpPost(URL + "/gamePlayJson");
 			if (!"".equals(yesOrNo)) {
 				String content = gson.toJson(new QuestionAnswerResponse(id, yesOrNo));
@@ -62,14 +60,13 @@ public class AnimalClient {
 			node = gson.fromJson(sResponse, Node.class);
 
 			if (node.question.equals("done")) {
-				done = true;
 				System.out.println("Well, that's it!");
+				break;
 			} else {
 				id = node.id;
 				System.out.print(node.question);
 				yesOrNo = in.nextLine();
 			}
-			i--;
 		}
 		in.close();
 	}
