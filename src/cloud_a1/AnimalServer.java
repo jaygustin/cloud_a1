@@ -18,8 +18,8 @@ public class AnimalServer {
 					animalTree.addYesChild(20, 10, "Is it a duck?");
 					animalTree.addNoChild(20, 25, "Is it a chicken?");
 				animalTree.addNoChild(30, 35, "Does it collect honey?");
-					animalTree.addYesChild(35, 40, "Is it a bat?");
-					animalTree.addNoChild(35, 28, "Is it a bee?");
+					animalTree.addYesChild(35, 40, "Is it a bee?");
+					animalTree.addNoChild(35, 28, "Is it a bat?");
 			animalTree.addNoChild(50, 75, "Does it have scales?");
 				animalTree.addYesChild(75, 60, "Is it armless?");
 					animalTree.addYesChild(60, 5, "Is it a snake?");

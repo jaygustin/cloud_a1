@@ -51,26 +51,22 @@ public class AnimalClient {
 		String responseBody = httpclient.execute(httpGet, responseHandler);
 		Node node = gson.fromJson(responseBody, Node.class);
 		System.out.print(node.question);
-		String yesOrNo = in.nextLine();
 
 		int id = node.id;
 		while (true) {
 			HttpPost httpPost = new HttpPost(URL + "/gamePlayJson");
-			if (!"".equals(yesOrNo)) {
-				String content = gson.toJson(new QuestionAnswerResponse(id, yesOrNo));
-				StringEntity entity = new StringEntity(content, Handler.CHARSET);
-				httpPost.setEntity(entity);
-			}
+			String content = gson.toJson(new QuestionAnswerResponse(id, yesOrNo(in)));
+			StringEntity entity = new StringEntity(content, Handler.CHARSET);
+			httpPost.setEntity(entity);
 			String sResponse = httpclient.execute(httpPost, responseHandler);
 			node = gson.fromJson(sResponse, Node.class);
 
 			if (node.question.equals("done")) {
-				System.out.println("Well, that's it!");
+				System.out.println("Well, that's it! Re-run the program if you would like to play again.");
 				break;
 			} else {
 				id = node.id;
 				System.out.print(node.question);
-				yesOrNo = in.nextLine();
 			}
 		}
 	}
@@ -82,17 +78,14 @@ public class AnimalClient {
 		InputStream is = response.getEntity().getContent();
 		ResponseProtos.ServerResponse sr = ResponseProtos.ServerResponse.parseFrom(is);
 		System.out.print(sr.getQuestion());
-		String yesOrNo = in.nextLine();
 
 		int id = sr.getId();
 		while (true) {
 			HttpPost httpPost = new HttpPost(URL + "/gamePlayProtoBuf");
-			if (!"".equals(yesOrNo)) {
-				byte[] content = ResponseProtos.ClientResponse.newBuilder().setId(id).setYes(yesOrNo.contains("yes"))
-						.build().toByteArray();
-				ByteArrayEntity entity = new ByteArrayEntity(content);
-				httpPost.setEntity(entity);
-			}
+			byte[] content = ResponseProtos.ClientResponse.newBuilder().setId(id).setYes(yesOrNo(in))
+					.build().toByteArray();
+			ByteArrayEntity entity = new ByteArrayEntity(content);
+			httpPost.setEntity(entity);
 			response = httpclient.execute(httpPost);
 			is = response.getEntity().getContent();
 			sr = ResponseProtos.ServerResponse.parseFrom(is);
@@ -103,7 +96,17 @@ public class AnimalClient {
 			} else {
 				id = sr.getId();
 				System.out.print(sr.getQuestion());
-				yesOrNo = in.nextLine();
+			}
+		}
+	}
+
+	static private boolean yesOrNo(Scanner in) {
+		while (true) {
+			String yesOrNo = in.nextLine();
+			if (yesOrNo.equals("yes")) {
+				return true;
+			} else if (yesOrNo.equals("no")) {
+				return false;
 			}
 		}
 	}

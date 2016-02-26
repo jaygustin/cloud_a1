@@ -55,7 +55,8 @@ public class ProtoBufHandler extends Handler {
 				sendResponse(he, buildByteArrayForNode(nextNode));
 			}
 		} else {
-			//do nothing, something went wrong
+			//something went wrong
+			sendResponse(he, buildByteArrayForNode(doneNode));
 		}
 	}
 

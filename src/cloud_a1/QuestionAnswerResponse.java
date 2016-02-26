@@ -6,8 +6,8 @@ public class QuestionAnswerResponse implements Serializable {
 	private static final long serialVersionUID = -2751306541198860923L;
 	int id;
 	boolean yes;
-	public QuestionAnswerResponse(int key, String yesOrNo) {
+	public QuestionAnswerResponse(int key, boolean yes) {
 		this.id = key;
-		this.yes = yesOrNo.contains("yes") || yesOrNo.contains("true");
+		this.yes = yes;
 	}
 }

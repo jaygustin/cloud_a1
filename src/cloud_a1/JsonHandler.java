@@ -54,7 +54,8 @@ public class JsonHandler extends Handler {
 				sendResponse(he, buildJsonForNode(nextNode).toString());
 			}
 		} else {
-			//do nothing, something went wrong
+			//something went wrong
+			sendResponse(he, buildJsonForNode(doneNode).toString());
 		}
 	}
 
